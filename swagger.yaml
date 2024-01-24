@@ -1,0 +1,1353 @@
+tags:
+- name: users
+  description: users API
+- name: authentication
+  description: Authentication Api
+- name: savings
+  description: Savings Api
+- name: wallet
+  description: Wallet Api
+
+
+paths:
+# [GET] savings
+  /api/savings:
+    get:
+      tags:
+      - savings
+      summary: Find All Savings By User
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+# [Post] savings
+  /api/savings?type=wallet:
+    post:
+      tags:
+      - savings
+      summary: create a savings with money in wallet
+      parameters:
+      - name: body
+        in: body
+        description: users bearer token header for identification and take other data
+        required: true
+        schema:
+          $ref: '#/definitions/createSavings'
+
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+# [Post] savings
+  /api/savings?type=saved_cards:
+    post:
+      tags:
+      - savings
+      summary: create a savings using saved cards
+      parameters:
+      - name: body
+        in: body
+        description: users bearer token header for identification and take other data
+        required: true
+        schema:
+          $ref: '#/definitions/createSavingsWithSavedCard'
+
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+# [GET] savings Plans
+  /api/savings/plan:
+    get:
+      tags:
+      - Savings Plan
+      summary: Find All Savings Plan
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+# [GET] Savings Plans By Id
+  /api/savings/plan/{id}:
+    get:
+      tags:
+      - Savings Plan
+      summary: Find Savings Plan By Id
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+
+# [PUT] savings/extend-savings
+  /api/savings/extend/savings/:
+    post:
+      tags:
+      - savings
+      summary: Extends saving plans withdrawal date, and optionally increase savings amount, pass the initial amount if no new amount is given
+      parameters:
+      - name: body
+        in: body
+        description: takes amount and extension date
+        required: true
+        schema:
+          $ref: '#/definitions/updateSavings'
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+  # [GET] Toggle Savings plan
+  api/savings/toggle-autosave/{id}:
+    get:
+      tags:
+      - savings
+      summary: Toggles the autosave for a particular savings
+      responses:
+        200:
+         description: 'user Created'
+         content:
+          application/json:
+            schema:
+              $ref: '#/definitions/success'
+        500:
+          description: 'Server Error'
+# [Post] savings/initiate
+  api/savings/initiate/:
+    post:
+      tags:
+      - savings
+      summary: Initiate manual save for existing users with an opened savings account
+      parameters:
+      - name: body
+        in: body
+        description: user inputs the amount to save and the id of the saving to top up
+        required: true
+        schema:
+          $ref: '#/definitions/topUpSavings'
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [Post] savings/initiate
+  api/savings/withdraw/:
+    post:
+      tags:
+      - savings
+      summary: Withdraw money from savings
+      parameters:
+      - name: body
+        in: body
+        description: user inputs the amount to withdraw and the destination account or inapp wallet
+        required: true
+        schema:
+          $ref: '#/definitions/topUpSavings'
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [Post] savings/initiate
+  api/savings/confirm/target-save:
+    post:
+      tags:
+      - savings
+      summary: Confirm Invitation Code for Target savings
+      parameters:
+      - name: body
+        in: body
+        description: user inputs invite code to join the target group
+        required: true
+        schema:
+          $ref: '#/definitions/confirmTargetSavings'
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [Post] savings/initiate
+  api/savings/join:
+    post:
+      tags:
+      - savings
+      summary: Join Target savings
+      parameters:
+      - name: body
+        in: body
+        description: user clicks join the target group using existing  savings Id(the creator of the target group)
+        required: true
+        schema:
+          type: object
+          properties:
+            saving_id:
+              type: string
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [GET] users
+  /api/users:
+    get:
+      tags:
+      - users
+      summary: Find All Users
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+# [GET] users
+  /api/users/cards:
+    get:
+      tags:
+      - users
+      summary: Find All Users Cards
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+# [DELETE] users/
+  /api/users/cards/{authorization_code}:
+    delete:
+      tags:
+      - users
+      summary: Delete a user Card
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+# [GET] users/id
+  api/users/{id}:
+    get:
+      tags:
+      - users
+      summary: Find User By Id
+      parameters:
+      - name: id
+        in: path
+        description: User Id
+        required: true
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# [PUT] users/id
+    put:
+      tags:
+      - users
+      summary: Update User By Id
+      parameters:
+      - name: id
+        in: path
+        description: user Id
+        required: true
+      - name: body
+        in: body
+        description: user Data
+        required: true
+        schema:
+          $ref: '#/definitions/users'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+
+# [DELETE] users/id
+    delete:
+      tags:
+      - users
+      summary: Delete User By Id
+      parameters:
+      - name: id
+        in: path
+        description: user Id
+        required: true
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# Post Updates user security pin
+  /api/users/update/security/pin:
+      post:
+        tags:
+          - users
+        summary: update the security pin for user
+        parameters:
+        - name: body
+          in: body
+          description: users beared header for identification and takes the new pin as input
+          required: true
+          schema:
+            type: object
+            properties:
+              pin:
+                type: string
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [PUT] users/id
+  /api/users/profile/update:
+      put:
+        tags:
+          - users
+        summary: update user profile
+        parameters:
+        - name: body
+          in: body
+          description: users bearer token header for identification and takes the new pin as input
+          required: true
+          schema:
+            $ref: '#/definitions/updateUserProfile'
+
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [POST] upload
+  /api/users/profile/image/upload:
+      put:
+        tags:
+          - users
+        summary: upload user profile pics
+        parameters:
+          - name: image
+            in: query
+            description: Additional Metadata
+            required: false
+            schema:
+              type: string
+        requestBody:
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [POST] users/verify/pin
+  /api/users/verify/pin:
+      post:
+        tags:
+          - users
+        summary: verify existing user's pin for update
+        parameters:
+        - name: body
+          in: body
+          description: users bearer token header for identification,takes user ID and takes the new pin as input
+          required: true
+          schema:
+            type: object
+            properties:
+              pin:
+                type: string
+
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [PUT] users/update/pin
+  /api/users/update/pin:
+      put:
+        tags:
+          - users
+        summary: update user pin
+        parameters:
+        - name: body
+          in: body
+          description: users bearer token header for identification,takes user ID and takes the new pin as input
+          required: true
+          schema:
+            type: object
+            properties:
+              pin:
+                type: string
+
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [POST] users/verify/password
+  /api/users/verify/password:
+      post:
+        tags:
+          - users
+        summary: verify existing user's password for update
+        parameters:
+        - name: body
+          in: body
+          description: users bearer token header for identification,takes user ID and takes the new password as input
+          required: true
+          schema:
+            type: object
+            properties:
+              password:
+                type: string
+
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [PUT] users/update/password
+  /api/users/update/password:
+      put:
+        tags:
+          - users
+        summary: update user password
+        parameters:
+        - name: body
+          in: body
+          description: users bearer token header for identification,takes user ID and takes the new password as input
+          required: true
+          schema:
+            type: object
+            properties:
+              password:
+                type: string
+
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          201:
+            description: 'user Created'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+
+# [POST] signup
+  /api/auth/signup:
+    post:
+      tags:
+        - authentication
+      summary: Create a new user in the database
+      parameters:
+      - name: body
+        in: body
+        description: user inputs their Details into the application
+        required: true
+        schema:
+          $ref: '#/definitions/registrationDetail'
+      responses:
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/error'
+        409:
+          description: 'Resource Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/error'
+        201:
+          description: 'user Created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/success'
+# [POST] login
+  /api/auth/login:
+    post:
+      tags:
+        - authentication
+      summary: Logs users in to the system
+      parameters:
+      - name: body
+        in: body
+        description: user inputs their Details into the application
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+          required:
+            - email
+            - password
+      responses:
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/error'
+        409:
+          description: 'Resource Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/error'
+        200:
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/success'
+# [POST] send otp to user email
+  /api/auth/generate/email/otp:
+      post:
+        tags:
+          - authentication
+        summary: Send Otp to user for email verification
+        parameters:
+        - name: body
+          in: body
+          description: Receive user email as params for verification
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          200:
+            description: 'OK,return otp_hash as part of data object'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [POST] verify the otp sent to user email
+  /api/auth/verify/otp:
+      post:
+        tags:
+          - authentication
+        summary: Verify Otp sent to user
+        parameters:
+        - name: body
+          in: body
+          description: Receive otp_hashed and received otp_code as params for verification
+          required: true
+          schema:
+            type: object
+            properties:
+              opt_hash:
+                type: string
+              otp_code:
+                type: string
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          200:
+            description: 'OK'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [POST] send otp to user mobile number
+  /api/auth/generate/mobile/otp:
+      post:
+        tags:
+          - authentication
+        summary: Send Otp to user for mobile verification
+        parameters:
+        - name: body
+          in: body
+          description: Receive user email and mobile number as params for verification
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              mobile_number:
+                type: string
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          200:
+            description: 'OK'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [POST] verify otp sent to user mobile number
+  /api/auth/verify/mobile/otp:
+        post:
+          tags:
+            - authentication
+          summary: Verify Otp sent to user mobile number
+          parameters:
+          - name: body
+            in: body
+            description: Receive otp_hashed and received otp_code as params for verification
+            required: true
+            schema:
+              type: object
+              properties:
+                opt_hash:
+                  type: string
+                otp_code:
+                  type: string
+                mobile_number:
+                  type: string
+          responses:
+            400:
+              description: 'Bad Request'
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/definitions/error'
+            409:
+              description: 'Resource Not Found'
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/definitions/error'
+            200:
+              description: 'OK'
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/definitions/success'
+
+# [POST] verify mobile otp
+  /api/auth/forgot/password:
+      post:
+        tags:
+          - authentication
+        summary: user request for password reset
+        parameters:
+        - name: body
+          in: body
+          description: Receive the email or mobile number(not both), and type of verification
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              mobile_number:
+                type: string
+              type:
+                type: string
+                enum: [email|mobile]
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          200:
+            description: 'OK'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [POST] reset user password
+  /api/auth/reset/password:
+      post:
+        tags:
+          - authentication
+        summary: reset user password after email or mobile_number verification
+        parameters:
+        - name: body
+          in: body
+          description: Receive the email or mobile number(not both), new user password, type of identification
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              mobile_number:
+                type: string
+              password:
+                type: string
+              type:
+                type: string
+                enum: [email|mobile]
+              token:
+                type: string
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          200:
+            description: 'OK'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+# [POST] set user secirity pin
+  /api/auth/set/pin:
+        post:
+          tags:
+            - authentication
+          summary: update the security pin for user
+          parameters:
+          - name: body
+            in: body
+            description: users beared header for identification and takes the new pin as input
+            required: true
+            schema:
+              type: object
+              properties:
+                pin:
+                  type: string
+                token:
+                  type: string
+          responses:
+            400:
+              description: 'Bad Request'
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/definitions/error'
+            409:
+              description: 'Resource Not Found'
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/definitions/error'
+            201:
+              description: 'user Created'
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/definitions/success'
+
+   #[POST] verify the otp sent to user email
+  /api/verify/otp:
+      post:
+        tags:
+          - verifications
+        summary: Verify Otp sent to user
+        parameters:
+        - name: body
+          in: body
+          description: Receivem mobile_number, received otp_code as params for verification and an authorization bearer token
+          required: true
+          schema:
+            type: object
+            properties:
+              opt_hash:
+                type: string
+              otp_code:
+                type: string
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          200:
+            description: 'OK'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+
+# [POST] send otp to user mobile number
+  /api/send/otp:
+      post:
+        tags:
+          - verifications
+        summary: Send Otp to user for transaction verification
+        parameters:
+        - name: body
+          in: body
+          description: Receive mobile number as params for verification and authorization bearer token
+          required: true
+          schema:
+            type: object
+            properties:
+              mobile_number:
+                type: string
+        responses:
+          400:
+            description: 'Bad Request'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          409:
+            description: 'Resource Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/error'
+          200:
+            description: 'OK'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/definitions/success'
+# [Post] wallet/withdraw
+  api/wallet/withdraw:
+    post:
+      tags:
+      - wallet
+      summary: Withdraw from wallet
+      parameters:
+      - name: body
+        in: body
+        description: user gets to withdraw from wallet
+        required: true
+        schema:
+          type: object
+          properties:
+            amount:
+              type: number
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [Post] wallet/withdraw
+  api/wallet/deposit?type=card:
+    post:
+      tags:
+      - wallet
+      summary: Deposit into wallet with card info
+      parameters:
+      - name: body
+        in: body
+        description: user gets to deposit to wallet with card info
+        required: true
+        schema:
+          type: object
+          properties:
+            amount:
+              type: number
+            card:
+              type: object
+              $ref: '#/definitions/card'
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [Post] wallet/withdraw
+  api/wallet/deposit?type=saved_cards:
+    post:
+      tags:
+      - wallet
+      summary: Deposit into wallet using saved_cards
+      parameters:
+      - name: body
+        in: body
+        description: user gets to deposit to wallet
+        required: true
+        schema:
+          type: object
+          properties:
+            amount:
+              type: number
+            authorization_code:
+              type: string
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [GET] wallet
+  /api/wallet:
+    get:
+      tags:
+      - wallet
+      summary: Get User Wallet
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+# definitions
+definitions:
+  registrationDetail:
+    type: object
+    required:
+        - email
+        - password
+        - first_name
+        - last_name
+        - token
+    properties:
+      email:
+        type: string
+        description: user Email
+      first_name:
+        type: string
+        description: user first name
+      last_name:
+        type: string
+        description: user last name
+      password:
+        type: string
+        description: user Password
+      token:
+        type: string
+        description: authentication token for registration data
+
+  updateUserProfile:
+    type: object
+    required:
+        - first_name
+        - last_name
+        - gender
+        - dob
+    properties:
+      first_name:
+        type: string
+        description: user first name
+        example: firstname
+      last_name:
+        type: string
+        description: user last name
+        example: lastname
+      gender:
+        type: string
+        example: male
+        description: user gender only take an ENUM either Male or Female
+      dob:
+        type: string
+        example: 1990-09-09T23:00:00.000Z
+        description: user's date of birth
+
+  createSavings:
+    type: object
+    required:
+        - plan
+        - amount
+        - frequency
+        - start_date
+        - withdrawal_date
+        - source
+        - interest
+        - autosave
+    properties:
+      title:
+        type: string
+      plan:
+        type: string
+        description: user's savings plan id
+      amount:
+        type: number
+        description: amount
+      frequency:
+        type: string
+        description: frequency
+      start_date:
+        type: string
+        example: 1990-09-09T23:00:00.000Z
+        description: user's date of birth
+      withdrawal_date:
+        type: string
+        example: 1990-09-09T23:00:00.000Z
+        description: user's date of birth
+      source:
+        type: string
+        description: funds source
+      interest:
+        type: number
+        description: interest
+      autosave:
+        type: boolean
+        description: auto save
+      invite_code:
+        type: string
+      num_of_participants:
+        type: number
+
+  createSavingsWithSavedCard:
+    type: object
+    required:
+        - plan
+        - amount
+        - frequency
+        - start_date
+        - withdrawal_date
+        - source
+        - interest
+        - autosave
+        - authorization_code
+    properties:
+      title:
+        type: string
+      plan:
+        type: string
+        description: user's savings plan id
+      amount:
+        type: number
+        description: amount
+      frequency:
+        type: string
+        description: frequency
+      start_date:
+        type: string
+        example: 1990-09-09T23:00:00.000Z
+        description: user's date of birth
+      withdrawal_date:
+        type: string
+        example: 1990-09-09T23:00:00.000Z
+        description: user's date of birth
+      source:
+        type: string
+        description: funds source
+      interest:
+        type: number
+        description: interest
+      autosave:
+        type: boolean
+        description: auto save
+      invite_code:
+        type: string
+      num_of_participants:
+        type: number
+      authorization_code:
+        type: number
+
+  updateSavings:
+    type: object
+    required:
+        - amount
+        - withdrawal_date
+
+    properties:
+      amount:
+        type: number
+        description: amount
+      withdrawal_date:
+        type: string
+        example: 1990-09-09T23:00:00.000Z
+        description: user's date of birth
+  topUpSavings:
+    type: object
+    required:
+        - amount
+        - saving_id
+    properties:
+      amount:
+        type: number
+        description: amount
+      saving_id:
+        type: string
+        description: saving identification
+  confirmTargetSavings:
+    type: object
+    required:
+        - invite_code
+        - saving_id
+    properties:
+      amount:
+        type: string
+        description: invitation code
+      saving_id:
+        type: string
+        description: saving identification
+  withdrawSavings:
+    type: object
+    required:
+        - amount
+        - saving_id
+        - destination
+    properties:
+      amount:
+        type: number
+        description: amount
+      saving_id:
+        type: string
+        description: saving identification
+      destination: wallet or bank information
+  card:
+    type: object
+    required:
+        - cvv
+        - number
+        - expiry_month
+        - expiry_year
+    properties:
+      cvv:
+        type: string
+        description: card cvv
+      number:
+        type: string
+        description: card number
+      expiry_month:
+        type: string
+        description: card expiry month
+      expiry_year:
+        type: string
+        description: card expiry year
+
+  error:
+    type: object
+    properties:
+      status:
+        type: string
+        description: failed
+      message:
+        type: string
+        description: error description
+      errors:
+        type: object
+        description: holds the array of errors if any
+  success:
+    type: object
+    properties:
+      status:
+        type: string
+        description: success
+      message:
+        type: string
+        description: error description
+      data:
+        type: object
+        description: holds the array of data if any
+
+schemes:
+ - https
+ - http
